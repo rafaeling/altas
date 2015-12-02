@@ -17,8 +17,8 @@ public class Airport {
         
         Plane cliente1= new Plane();
         Plane cliente2= new Plane();
-        //Plane cliente3= new Plane();
-        //Plane cliente4= new Plane();
+        Plane cliente3= new Plane();
+        Plane cliente4= new Plane();
         
         
         
@@ -26,9 +26,9 @@ public class Airport {
         
         
         cliente1.start();
-        //cliente2.start();
-        //cliente3.start();
-        //cliente4.start();
+        cliente2.start();
+        cliente3.start();
+        cliente4.start();
 
     
     }
