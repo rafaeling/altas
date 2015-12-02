@@ -24,7 +24,7 @@ public class Plane extends Thread{
     // Para guardar la lectura
     String respuesta="";  
     
-    String land = "land";
+    String no_land = "no_land";
     
     boolean land_plane = false;
 		
@@ -39,86 +39,99 @@ public class Plane extends Thread{
     
     int i = 0;
     
+    String estado;
+    
     public void run() {
         try {
-            // Creamos un socket que se conecte a "host" y "port":
-
+            
             while(!land_plane){
                 
                 socketServicio =new Socket (host,port);
                 
-                i++;
                 
-                //socketServicio =new Socket (host,port);
+                /*
+                    PIDO ATERRIZAR
+                */
                 
-                // stream de escritura (por aquí se envía los datos al cliente)
                 PrintWriter outPrinter = new PrintWriter(socketServicio.getOutputStream(),true);
-                
-    // stream de lectura (por aquí se recibe lo que envía el cliente)
-    //BufferedReader inReader = new BufferedReader(new InputStreamReader(socketServicio.getInputStream()));  
-                
-
-                // Enviamos peticion de aterrizar
-
                 outPrinter.println("land");
-
-                //System.out.println("Numero: " + i);
-                
-                // Aunque le indiquemos a TCP que queremos enviar varios arrays de bytes, sólo
-                // los enviará efectivamente cuando considere que tiene suficientes datos que enviar...
-                // Podemos usar "flush()" para obligar a TCP a que no espere para hacer el envío:
-
                 outPrinter.flush();
-
-                // Leemos la respuesta del servidor. Para ello le pasamos un array de bytes, que intentará
-                // rellenar. El método "read(...)" devolverá el número de bytes leídos.
-
-                //buferRecepcion = inReader.readLine();
-
-                // Hay que reservar memoria para almacenar lo leído
-                // Intenta leer tantos bytes como posiciones tiene el
-                // array de bytes, aunque es posible que no haya
-                // tantos datos, y sólo se lean bytesLeidos:
-
-                //System.out.println("Recibido: ");
-                //System.out.print(buferRecepcion);
+                
+                /*
+                    COMPRUEBO LA RESPUESTA
+                */
                 
                 BufferedReader inReader = new BufferedReader(new InputStreamReader(socketServicio.getInputStream())); 
-                
                 respuesta = inReader.readLine();
                 
-                if (respuesta.equals(land)){
+                
+                //SI ME DEJA ATERRIZAR
+                if (!(respuesta.equals(no_land))){
                     
                     System.out.println("Puede Aterrizar");
                     
+                    
+                    //ENVIO ACEPTACION
                     PrintWriter land_accepted = new PrintWriter(socketServicio.getOutputStream(),true);
 
-                    outPrinter.println("land_accepted");
+                    land_accepted.println(respuesta);
                     
-                    outPrinter.flush();
+                    land_accepted.flush();
                     
                     land_plane = true;
                     
+                    estado = "aterrizando";
+                    
+                }else
+                {
+                    System.out.println("No puede aterrizar");
+                    
+                    estado = "esperando_pista";
                 }
                 
-                if(land_plane)
-                {
-                    BufferedReader inputStream = new BufferedReader(new InputStreamReader(socketServicio.getInputStream()));
-                 
-                    String accept = inputStream.readLine();
-                    
-                    // aqui decido aleatoriamente si puedo o no
-                    
-                    PrintWriter land_accepted = new PrintWriter(socketServicio.getOutputStream(),true);
-
-                    outPrinter.println(accept);
-                    
-                    outPrinter.flush();
-                }
 
             }
+            
+            
+            /*
+            
+                Esperando Garage
+            
+            */
+            
+            
+            /*
+            
+                Esperando Despege
+            
+            */
+            
+            /*
+            
+                Fuera del aeropuerto
+            
+            */
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
                socketServicio.close(); 
             
+  
+               
+               
                 // Excepciones:
         } catch (UnknownHostException e) {
                 System.err.println("Error: Nombre de host no encontrado.");
