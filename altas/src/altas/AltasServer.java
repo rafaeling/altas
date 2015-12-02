@@ -23,6 +23,7 @@ public class AltasServer extends Thread{
     private LandingTrack airport;
     
     String land = "land";
+    String garage = "garage";
     
     int port=8989;
            
@@ -47,17 +48,19 @@ public class AltasServer extends Thread{
             do {
                 
                 
+                
                 socketServicio = serverSocket.accept();
                 
 		BufferedReader inputStream = new BufferedReader(new InputStreamReader(socketServicio.getInputStream()));
                 datosRecibidos = inputStream.readLine();
 
                 
+                // Compruebo si hay sitio para aterrizar;
                 if(datosRecibidos.equals(land))
                 {
-                    System.out.println("Envio respuesta");
+                    //System.out.println("Servidor envia respuesta");
                     
-                    // Compruebo si hay sitio para aterrizar;
+                    
                     
                     PrintWriter outPrinter = new PrintWriter(socketServicio.getOutputStream(),true);
                     
@@ -84,15 +87,52 @@ public class AltasServer extends Thread{
                         
                         int n = Integer.parseInt(num);
                         
-                        airport.add_plane(n);
+                        airport.add_plane_to_landing_track(n);
                         
                         airport.Mostrar();
                     }
+                
+                }else if(datosRecibidos.equals(garage))
+                {
+                    //System.out.println("Envio respuesta");
                     
+                    PrintWriter outPrinter = new PrintWriter(socketServicio.getOutputStream(),true);
                     
+                    Pair<Integer,Integer> place = airport.TestGarageFree();
                     
-                    
-                   
+                    if( place.first == -1)
+                    {
+                        outPrinter.println("no_garage");
+                        outPrinter.flush();
+                        
+                    }else
+                    {
+                                             
+                        outPrinter.println("garage");
+                        outPrinter.flush();
+                        
+                        airport.add_plane_to_garage(place);
+                        
+                        PrintWriter x = new PrintWriter(socketServicio.getOutputStream(),true);
+                        outPrinter.println(Integer.toString(place.first));
+                        outPrinter.flush();
+                        
+                        PrintWriter y = new PrintWriter(socketServicio.getOutputStream(),true);
+                        outPrinter.println(Integer.toString(place.first));
+                        outPrinter.flush();
+                        
+                        
+                        
+                        BufferedReader delete = new BufferedReader(new InputStreamReader(socketServicio.getInputStream()));
+
+                        String num = delete.readLine();
+                        
+                        int n = Integer.parseInt(num);
+                        
+                        airport.add_free_to_landing_track(n);
+                        airport.Mostrar();
+                        
+                    }
                 }
                 
                 

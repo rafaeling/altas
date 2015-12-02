@@ -26,7 +26,14 @@ public class Plane extends Thread{
     
     String no_land = "no_land";
     
-    boolean land_plane = false;
+    boolean waiting_land_track = false;
+    boolean wating_garage = false;
+    boolean waitng_take_off_landing = false;
+    boolean take_off = false;
+    
+    private int landing_track;
+    
+    private Pair<Integer, Integer> garage_coord = new Pair(0,0);
 		
     // Nombre del host donde se ejecuta el servidor:
     String host="localhost";
@@ -44,11 +51,17 @@ public class Plane extends Thread{
     public void run() {
         try {
             
-            while(!land_plane){
-                
+            /*
+            
+                Esperando Aterrizaje
+            
+            */
+            
+            while(!waiting_land_track ){
                 socketServicio =new Socket (host,port);
                 
                 
+               // System.out.println("********************\n" + "   PIDO ATERRIZAR\n" + "********************");
                 /*
                     PIDO ATERRIZAR
                 */
@@ -68,8 +81,10 @@ public class Plane extends Thread{
                 //SI ME DEJA ATERRIZAR
                 if (!(respuesta.equals(no_land))){
                     
-                    System.out.println("Puede Aterrizar");
+                    //System.out.println("Avion Puede Aterrizar");
                     
+                    //GUARDO MI PISTA DE ATERRIZAJE
+                    landing_track = Integer.parseInt(respuesta);
                     
                     //ENVIO ACEPTACION
                     PrintWriter land_accepted = new PrintWriter(socketServicio.getOutputStream(),true);
@@ -78,18 +93,20 @@ public class Plane extends Thread{
                     
                     land_accepted.flush();
                     
-                    land_plane = true;
+                    waiting_land_track  = true;
                     
-                    estado = "aterrizando";
+                    estado = "Aterrizando";
+                    //System.out.println(estado);
                     
                 }else
                 {
-                    System.out.println("No puede aterrizar");
+                    //System.out.println("No puede aterrizar");
                     
-                    estado = "esperando_pista";
+                    estado = "Esperando Pista";
+                   // System.out.println(estado);
                 }
                 
-
+                socketServicio.close(); 
             }
             
             
@@ -99,12 +116,83 @@ public class Plane extends Thread{
             
             */
             
+            //System.out.println("********************\n" + "   PIDO GARAGE\n" + "********************");
+            
+            
+            
+            while(!wating_garage)
+            {
+                /*
+                    PIDO GARAGE
+                */
+                
+                socketServicio =new Socket (host,port);
+                PrintWriter outPrinter = new PrintWriter(socketServicio.getOutputStream(),true);
+                outPrinter.println("garage");
+                outPrinter.flush();
+                
+                /*
+                    COMPRUEBO LA RESPUESTA
+                */
+                
+                BufferedReader inReader = new BufferedReader(new InputStreamReader(socketServicio.getInputStream())); 
+                respuesta = inReader.readLine();
+                
+                
+                //SI ME DEJA APARCAR
+                if (!(respuesta.equals("no_garage"))){
+                    
+                    //System.out.println("Puede Aparcar");
+                    
+                    //Guardo mi parking
+                    
+                    BufferedReader coor_x = new BufferedReader(new InputStreamReader(socketServicio.getInputStream())); 
+                    String x = inReader.readLine();
+                    garage_coord.first = Integer.parseInt(x);
+                    
+                    BufferedReader coor_y = new BufferedReader(new InputStreamReader(socketServicio.getInputStream())); 
+                    String y = inReader.readLine();
+                    garage_coord.second = Integer.parseInt(y);
+                    
+                    
+                    wating_garage  = true;
+                    
+                    
+                    // Envio que dejo pisa al servidor
+                    PrintWriter pista = new PrintWriter(socketServicio.getOutputStream(),true);
+                    pista.println(Integer.toString(landing_track));
+                    pista.flush();
+                    
+                    estado = "Aparcando";
+                    //System.out.println(estado);
+                    
+                }else
+                {
+                   // System.out.println("No Puede Aparcar");
+                    
+                    estado = "Esperando Aparcar";
+                    
+                    //System.out.println(estado);
+                }
+                socketServicio.close(); 
+            }
+            
+            
+            
+            
+            
             
             /*
             
-                Esperando Despege
+                Esperando Pista Despegue
             
             */
+            
+            
+            
+            
+            
+            
             
             /*
             

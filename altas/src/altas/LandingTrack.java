@@ -104,8 +104,57 @@ public class LandingTrack {
         
     }
     
-    public void add_plane(int n)
+    public void add_plane_to_landing_track(int n)
     {
         landingtrack[n] = 1;
     }
+    
+    public Pair<Integer, Integer> TestGarageFree()
+    {
+        boolean free_garage = false;
+        
+        Pair<Integer, Integer> coord = new Pair(0,0);
+        
+        for(int i = 0 ; i < this.Get_Tam_Garage() && !free_garage; i++)
+        {
+            for(int j = 0 ; j < this.Get_Tam_Garage() && !free_garage ; j++)
+            {
+                if(garage[i][j] == 0)
+                {
+                    free_garage = true;
+                    
+                    coord.first = i;
+                    coord.second = j;
+                    
+                }
+            }
+        }
+        
+        if(free_garage)
+        {
+            return coord;
+        }else
+        {
+            coord.first = -1;
+            coord.second = -1;
+            
+            return coord;
+        }
+    }
+    
+    public void add_plane_to_garage(Pair<Integer, Integer> n)
+    {
+        garage[n.first][n.second] = 1;
+    }
+    
+    public void add_free_to_landing_track(int n)
+    {
+        landingtrack[n] = 0;
+    }
+    
+    public void add_free_to_garage(Pair<Integer, Integer> n)
+    {
+        garage[n.first][n.second] = 0;
+    }
+    
 }
