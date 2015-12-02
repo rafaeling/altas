@@ -31,7 +31,7 @@ public class Plane extends Thread{
     boolean waitng_take_off_landing = false;
     boolean take_off = false;
     
-    private int landing_track;
+    private int landing_track, landing_track_take_off;
     
     private Pair<Integer, Integer> garage_coord = new Pair(0,0);
 		
@@ -147,11 +147,11 @@ public class Plane extends Thread{
                     //Guardo mi parking
                     
                     BufferedReader coor_x = new BufferedReader(new InputStreamReader(socketServicio.getInputStream())); 
-                    String x = inReader.readLine();
+                    String x = coor_x.readLine();
                     garage_coord.first = Integer.parseInt(x);
                     
                     BufferedReader coor_y = new BufferedReader(new InputStreamReader(socketServicio.getInputStream())); 
-                    String y = inReader.readLine();
+                    String y = coor_y.readLine();
                     garage_coord.second = Integer.parseInt(y);
                     
                     
@@ -189,7 +189,60 @@ public class Plane extends Thread{
             */
             
             
-            
+            while(!waitng_take_off_landing)
+            {
+               
+                
+                socketServicio =new Socket (host,port);
+                PrintWriter outPrinter = new PrintWriter(socketServicio.getOutputStream(),true);
+                outPrinter.println("pista");
+                outPrinter.flush();
+                
+                
+                
+                BufferedReader inReader = new BufferedReader(new InputStreamReader(socketServicio.getInputStream())); 
+                respuesta = inReader.readLine();
+                
+                
+                //SI HAY PISTA PARA DESPEGAR
+                if (!(respuesta.equals("no_pista"))){
+                    
+                    //System.out.println("Avion Puede Aterrizar");
+                    
+                    landing_track_take_off = Integer.parseInt(respuesta);
+                    
+                    //ENVIO MI PISA
+                    PrintWriter pista = new PrintWriter(socketServicio.getOutputStream(),true);
+
+                    pista.println(respuesta);
+                    
+                    pista.flush();
+                    
+                    waitng_take_off_landing  = true;
+                    
+                    estado = "En pista";
+                    //System.out.println(estado);
+                    
+                    //ENVIAR LA POSICION DE GARAGE QUE DEJO
+                    
+                    PrintWriter x = new PrintWriter(socketServicio.getOutputStream(),true);
+                    outPrinter.println(Integer.toString(garage_coord.first));
+                    outPrinter.flush();
+                        
+                    PrintWriter y = new PrintWriter(socketServicio.getOutputStream(),true);
+                    outPrinter.println(Integer.toString(garage_coord.first));
+                    outPrinter.flush();
+                    
+                }else
+                {
+                    //System.out.println("No puede aterrizar");
+                    
+                    estado = "Esperando Pista";
+                   // System.out.println(estado);
+                }
+                
+                socketServicio.close();  
+            }
             
             
             
@@ -205,7 +258,55 @@ public class Plane extends Thread{
             
             
             
-            
+            while(!take_off ){
+                socketServicio =new Socket (host,port);
+                
+                
+               // System.out.println("********************\n" + "   PIDO ATERRIZAR\n" + "********************");
+                /*
+                    PIDO ATERRIZAR
+                */
+                
+                PrintWriter outPrinter = new PrintWriter(socketServicio.getOutputStream(),true);
+                outPrinter.println("despegue");
+                outPrinter.flush();
+                
+                /*
+                    COMPRUEBO LA RESPUESTA
+                */
+                
+                BufferedReader inReader = new BufferedReader(new InputStreamReader(socketServicio.getInputStream())); 
+                respuesta = inReader.readLine();
+                
+                
+                //SI ME DEJA ATERRIZAR
+                if ((respuesta.equals("a volar"))){
+                    
+                    //System.out.println("Avion Puede Aterrizar");
+                    
+                    
+                    //ENVIO ACEPTACION
+                    PrintWriter land_accepted = new PrintWriter(socketServicio.getOutputStream(),true);
+
+                    land_accepted.println(Integer.toString(landing_track));
+                    
+                    land_accepted.flush();
+                    
+                    take_off  = true;
+                    
+                    estado = "Aterrizando";
+                    //System.out.println(estado);
+                    
+                }else
+                {
+                    //System.out.println("No puede aterrizar");
+                    
+                    estado = "Esperando Pista";
+                   // System.out.println(estado);
+                }
+                
+                socketServicio.close(); 
+            }
             
             
             

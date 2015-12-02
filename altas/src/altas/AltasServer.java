@@ -89,7 +89,7 @@ public class AltasServer extends Thread{
                         
                         airport.add_plane_to_landing_track(n);
                         
-                        airport.Mostrar();
+                        //airport.Mostrar();
                     }
                 
                 }else if(datosRecibidos.equals(garage))
@@ -130,9 +130,69 @@ public class AltasServer extends Thread{
                         int n = Integer.parseInt(num);
                         
                         airport.add_free_to_landing_track(n);
-                        airport.Mostrar();
+                        //airport.Mostrar();
                         
                     }
+                }else if(datosRecibidos.equals("pista"))
+                {
+                    //System.out.println("Servidor envia respuesta");
+                    
+                    
+                    
+                    PrintWriter outPrinter = new PrintWriter(socketServicio.getOutputStream(),true);
+                    
+                    int place = airport.TestLandingTrackFree();
+                    
+                    if( place == -1)
+                    {
+                        outPrinter.println("no_pista");
+                        outPrinter.flush();
+                        
+                    }else
+                    {
+                        
+                        
+                        outPrinter.println(Integer.toString(place));
+                        outPrinter.flush();
+                        
+                        
+                        airport.add_plane_to_landing_track(place);
+                    
+                        Pair<Integer, Integer> coor = new Pair(0,0);
+                        
+                        BufferedReader coor_x = new BufferedReader(new InputStreamReader(socketServicio.getInputStream())); 
+                        String x = coor_x.readLine();
+                        coor.first = Integer.parseInt(x);
+                    
+                        BufferedReader coor_y = new BufferedReader(new InputStreamReader(socketServicio.getInputStream())); 
+                        String y = coor_y.readLine();
+                        coor.second = Integer.parseInt(y);
+                        
+                        airport.add_free_to_garage(coor);
+                        
+                        
+                    }
+                
+                }if(datosRecibidos.equals("despegue"))
+                {
+                    //System.out.println("Servidor envia respuesta");
+                    
+                    
+                    
+                    PrintWriter outPrinter = new PrintWriter(socketServicio.getOutputStream(),true);
+                    
+                    outPrinter.println("a volar");
+                    outPrinter.flush();
+                        
+                    BufferedReader add = new BufferedReader(new InputStreamReader(socketServicio.getInputStream()));
+
+                    String num = add.readLine();
+                        
+                    int n = Integer.parseInt(num);
+                        
+                    airport.add_free_to_landing_track(n);
+                    
+                    airport.Mostrar();
                 }
                 
                 
