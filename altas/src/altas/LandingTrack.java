@@ -78,14 +78,19 @@ public class LandingTrack {
     {
         boolean free_landing_track = false;
         
-        int i;
+        int i = 0;
         
-        for(i = 0 ; i < Get_Num_Landing_Track() && !free_landing_track; i++)
+        while(i < Get_Num_Landing_Track() && !free_landing_track)
         {
+            
             if(landingtrack[i] == 0)
             {
                 free_landing_track = true;
+            }else
+            {
+                i++;
             }
+            
         }
         
         if(free_landing_track)
