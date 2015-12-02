@@ -22,6 +22,8 @@ public class AltasServer extends Thread{
 
     private LandingTrack airport;
     
+    String land = "land";
+    
     int port=8989;
            
     // Servidor
@@ -30,9 +32,6 @@ public class AltasServer extends Thread{
     // Servicio
     Socket socketServicio;
     
-    // stream de lectura (por aquí se recibe lo que envía el cliente)
-    private BufferedReader inputStream;
-        
     // stream de escritura (por aquí se envía los datos al cliente)
     private PrintWriter outputStream;
     
@@ -44,23 +43,64 @@ public class AltasServer extends Thread{
                 // Abrimos el socket en modo pasivo, escuchando el en puerto indicado por "port"
                 serverSocket = new ServerSocket(port);
                 
+                airport = new LandingTrack(3,6);
+                
                 // Mientras ... siempre!
             do {
-
+                
+                //airport.Mostrar();
+                
                 // Aceptamos una nueva conexión con accept()
                 socketServicio = serverSocket.accept();
                 
                 //InputStream inputStream = socketServicio.getInputStream();
-			inputStream = new BufferedReader(new InputStreamReader(socketServicio.getInputStream()));
+		BufferedReader inputStream = new BufferedReader(new InputStreamReader(socketServicio.getInputStream()));
                         
-                        //OutputStream outputStream = socketServicio.getOutputStream();
-                        outputStream = new PrintWriter(socketServicio.getOutputStream(),true);
+                //OutputStream outputStream = socketServicio.getOutputStream();
+                //outputStream = new PrintWriter(socketServicio.getOutputStream(),true);
 			
-			// Lee la frase a Yodaficar:
+                // Lee la frase a Yodaficar:
+
+                datosRecibidos = inputStream.readLine();
+
+                //outputStream.println(datosRecibidos);
+                
+                if(datosRecibidos.equals(land))
+                {
+                    System.out.println("Envio respuesta");
+                    
+                    // Compruebo si hay sitio para aterrizar;
+                    
+                    PrintWriter outPrinter = new PrintWriter(socketServicio.getOutputStream(),true);
+                    
+                    int place = airport.TestLandingTrackFree();
+                    
+                    if( place == -1)
+                    {
+                        outPrinter.println("no_land");
                         
-                        datosRecibidos = inputStream.readLine();
+                    }else
+                    {
+                        outPrinter.println(Integer.toString(place));
+                        socketServicio = serverSocket.accept();
+                        //Compruebo si el avion quiere aterrizar
+                        BufferedReader add = new BufferedReader(new InputStreamReader(socketServicio.getInputStream()));
+
+                        String num = add.readLine();
                         
-                        outputStream.println(datosRecibidos);
+                        int n = Integer.parseInt(num);
+                        
+                        airport.add_plane(n);
+                        
+                    }
+                    
+                    outPrinter.flush();
+                    
+                    
+                   
+                }
+                
+                
 
             }while(true);
                 
@@ -68,4 +108,6 @@ public class AltasServer extends Thread{
                 Logger.getLogger(AltasServer.class.getName()).log(Level.SEVERE, null, ex);
             }     
         }
+    
+    
 }
