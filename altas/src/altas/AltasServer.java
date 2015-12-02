@@ -40,30 +40,18 @@ public class AltasServer extends Thread{
     public void run(){
                 
         try {
-                // Abrimos el socket en modo pasivo, escuchando el en puerto indicado por "port"
                 serverSocket = new ServerSocket(port);
                 
-                airport = new LandingTrack(3,6);
+                airport = new LandingTrack(3,3);
                 
-                // Mientras ... siempre!
             do {
                 
-                //airport.Mostrar();
                 
-                // Aceptamos una nueva conexión con accept()
                 socketServicio = serverSocket.accept();
                 
-                //InputStream inputStream = socketServicio.getInputStream();
 		BufferedReader inputStream = new BufferedReader(new InputStreamReader(socketServicio.getInputStream()));
-                        
-                //OutputStream outputStream = socketServicio.getOutputStream();
-                //outputStream = new PrintWriter(socketServicio.getOutputStream(),true);
-			
-                // Lee la frase a Yodaficar:
-
                 datosRecibidos = inputStream.readLine();
 
-                //outputStream.println(datosRecibidos);
                 
                 if(datosRecibidos.equals(land))
                 {
@@ -78,11 +66,17 @@ public class AltasServer extends Thread{
                     if( place == -1)
                     {
                         outPrinter.println("no_land");
+                        outPrinter.flush();
                         
                     }else
                     {
+                        
+                        
                         outPrinter.println(Integer.toString(place));
-                        socketServicio = serverSocket.accept();
+                        outPrinter.flush();
+                        
+                        
+                        //socketServicio = serverSocket.accept();
                         //Compruebo si el avion quiere aterrizar
                         BufferedReader add = new BufferedReader(new InputStreamReader(socketServicio.getInputStream()));
 
@@ -92,9 +86,10 @@ public class AltasServer extends Thread{
                         
                         airport.add_plane(n);
                         
+                        airport.Mostrar();
                     }
                     
-                    outPrinter.flush();
+                    
                     
                     
                    
