@@ -5,9 +5,15 @@
  */
 package altas;
 
+
 /**
- *
- * @author rafae
+ * 
+ * @author rafaeling
+ * 
+ * Clase para guardar coordenadas.
+ * 
+ * @param <F>
+ * @param <S> 
  */
 public class Pair <F,S>{
     public F first;
