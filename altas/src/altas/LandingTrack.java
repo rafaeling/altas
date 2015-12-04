@@ -5,20 +5,32 @@
  */
 package altas;
 
+
 /**
- *
- * @author rafae
+ * 
+ * @author rafaeling
  */
 public class LandingTrack {
     
+    // Garage
     private int[][] garage;
     
+    // Pistas
     private int[] landingtrack;
     
+    // Tamaño garage
     private int tam_garage;
     
+    // Numero de pistas
     private int num_landing_track;
     
+    /**
+     * 
+     * Constructor de la clase LandingTrack
+     * 
+     * @param garage_size
+     * @param landingtrack_size 
+     */
     public LandingTrack(int garage_size, int landingtrack_size)
     {
         this.tam_garage = garage_size;
@@ -74,6 +86,16 @@ public class LandingTrack {
         return num_landing_track;
     }
     
+    
+    
+    /**
+    *
+    * @author rafaeling
+    * 
+    * Método que devuelve -1 si no hay ninguna pista libre o un número entero que es la pista libre
+    * 
+    */
+    
     public int TestLandingTrackFree()
     {
         boolean free_landing_track = false;
@@ -104,11 +126,27 @@ public class LandingTrack {
         
     }
     
+    /**
+    *
+    * @author rafaeling
+    * 
+    * Método que cambia la pista de aterrizaje n con un 1, para marcarla como ocupada.
+    * 
+    */
     public void add_plane_to_landing_track(int n)
     {
         landingtrack[n] = 1;
     }
     
+    /**
+    *
+    * @author rafaeling
+    * 
+    * Método que consulta si hay plazas libres en el garage.
+    * Devuelve -1 si no hay plazas libres o un par de enteros
+    * que son las coordendas del garage
+    * 
+    */
     public Pair<Integer, Integer> TestGarageFree()
     {
         boolean free_garage = false;
@@ -142,16 +180,39 @@ public class LandingTrack {
         }
     }
     
+    /**
+    *
+    * @author rafaeling
+    * 
+    * Método que cambia al plaza de garage (x,y) con un 1, para marcarla como ocupada.
+    * 
+    */
     public void add_plane_to_garage(Pair<Integer, Integer> n)
     {
         garage[n.first][n.second] = 1;
     }
     
+    
+    /**
+     * @author rafaeling
+     * 
+     * Método que cambia la pista n con un 0, para marcarla como libre.
+     * 
+     * @param n
+     * 
+     */
     public void add_free_to_landing_track(int n)
     {
         landingtrack[n] = 0;
     }
-    
+   
+    /**
+     * @author rafaeling
+     * 
+     * Método que cambia la plaza n (x,y), como libre.
+     * 
+     * @param n 
+     */
     public void add_free_to_garage(Pair<Integer, Integer> n)
     {
         garage[n.first][n.second] = 0;
