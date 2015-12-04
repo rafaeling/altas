@@ -17,14 +17,14 @@ import java.util.logging.Logger;
 /**
  *
  * @author rafaeling
+ * 
  */
 public class AltasServer extends Thread{
 
+    // Airport class with landing tracks and garage
     private LandingTrack airport;
     
-    String land = "land";
-    String garage = "garage";
-    
+    // Port
     int port=8989;
            
     // Servidor
@@ -34,142 +34,179 @@ public class AltasServer extends Thread{
     Socket socketServicio;
     
     // stream de escritura (por aquí se envía los datos al cliente)
-    private PrintWriter outputStream;
+  
     
     String datosRecibidos="";
     
     public void run(){
                 
         try {
+                // Inicializamos el servidor
                 serverSocket = new ServerSocket(port);
                 
+                // Inicializamos el aeropuerto
                 airport = new LandingTrack(3,3);
                 
             do {
                 
-                
-                
+                // Habilitamos la entreda de mensajes
                 socketServicio = serverSocket.accept();
                 
+                // Comenzamos con el primer mensaje que nos llega del cliente
 		BufferedReader inputStream = new BufferedReader(new InputStreamReader(socketServicio.getInputStream()));
                 datosRecibidos = inputStream.readLine();
 
                 
-                // Compruebo si hay sitio para aterrizar;
-                if(datosRecibidos.equals(land))
+                /****************
+                *   ATERRIZAR   *
+                *****************/
+                
+                // Comprobamos si el cliente quiere aterrizar
+                if(datosRecibidos.equals("land"))
                 {
-                    //System.out.println("Servidor envia respuesta");
+                    // Creamos el mensaje de respuesta
+                    PrintWriter outland = new PrintWriter(socketServicio.getOutputStream(),true);
                     
-                    
-                    
-                    PrintWriter outPrinter = new PrintWriter(socketServicio.getOutputStream(),true);
-                    
+                    // Llamamos a la Funcion TestLandingTrackFree() que comprueba si hay pistas libres
                     int place = airport.TestLandingTrackFree();
                     
-                    if( place == -1)
+                    if( place == -1) // Si no hay pista libres
                     {
-                        outPrinter.println("no_land");
-                        outPrinter.flush();
+                        // Enviamos la respuesta de no_land
+                        outland.println("no_land");
+                        outland.flush();
                         
                     }else
                     {
+                        // Si hay pista enviamos el entero recibido anteriormente
+                        outland.println(Integer.toString(place));
+                        outland.flush();
                         
                         
-                        outPrinter.println(Integer.toString(place));
-                        outPrinter.flush();
+                        // Espero un nuevo mensaje del cliente con la pista enviada para comprobar que acepta
+                        // la pista y se dispone a aterrizar
                         
-                        
-                        //socketServicio = serverSocket.accept();
-                        //Compruebo si el avion quiere aterrizar
+                        // Capto el mensaje de llegada
                         BufferedReader add = new BufferedReader(new InputStreamReader(socketServicio.getInputStream()));
 
                         String num = add.readLine();
                         
+                        // Parseamos la pista a entero
                         int n = Integer.parseInt(num);
                         
+                        // Añadimos el avion a la pista n.
                         airport.add_plane_to_landing_track(n);
                         
+                        //DESCOMENTAR SI SE QUIERE VER LAS SOLICITUDES DE ATERRIZAJE
+                        // Y COMENTAR LOS OTROS airport.Mostrar();
                         //airport.Mostrar();
                     }
                 
-                }else if(datosRecibidos.equals(garage))
-                {
-                    //System.out.println("Envio respuesta");
+                /**************
+                *   APARCAR   *
+                ***************/
                     
-                    PrintWriter outPrinter = new PrintWriter(socketServicio.getOutputStream(),true);
+                }else if(datosRecibidos.equals("garage"))
+                {   
+                    // Creamos el mensaje de respuesta
+                    PrintWriter inPrinter = new PrintWriter(socketServicio.getOutputStream(),true);
                     
+                    // Llamamos a la Funcion TestGarageFree() que comprueba si hay plaza libres en el garage
                     Pair<Integer,Integer> place = airport.TestGarageFree();
                     
-                    if( place.first == -1)
-                    {
-                        outPrinter.println("no_garage");
-                        outPrinter.flush();
+                    if( place.first == -1) // Si no hay pista libres
+                    { 
+                    
+                        // Enviamos la respuesta de no_garage
+                        inPrinter.println("no_garage");
+                        inPrinter.flush();
                         
                     }else
                     {
-                                             
-                        outPrinter.println("garage");
-                        outPrinter.flush();
+                        // Si hay plazas enviamos el mensaje garage
+                        inPrinter.println("garage");
+                        inPrinter.flush();
                         
+                        // Añadimos la nueva plaza al garage
                         airport.add_plane_to_garage(place);
                         
+                        // Enviamos las coordenada x del garage
                         PrintWriter x = new PrintWriter(socketServicio.getOutputStream(),true);
-                        outPrinter.println(Integer.toString(place.first));
-                        outPrinter.flush();
+                        x.println(Integer.toString(place.first));
+                        x.flush();
                         
+                        // Enviamos la coordenada y del garaje
                         PrintWriter y = new PrintWriter(socketServicio.getOutputStream(),true);
-                        outPrinter.println(Integer.toString(place.first));
-                        outPrinter.flush();
+                        y.println(Integer.toString(place.first));
+                        y.flush();
                         
                         
-                        
+                        // Esperamos a que el cliente nos envie la pista en la que se encuentra para marcarla como libre
                         BufferedReader delete = new BufferedReader(new InputStreamReader(socketServicio.getInputStream()));
-
                         String num = delete.readLine();
-                        
                         int n = Integer.parseInt(num);
                         
+                        // Cambiamos el estado de la pista n a libre
                         airport.add_free_to_landing_track(n);
+                        
+                        //DESCOMENTAR SI SE QUIERE VER LAS SOLICITUDES 
+                        // DE GARAJES Y COMENTAR LOS OTROS airport.Mostrar();
                         //airport.Mostrar();
                         
                     }
+                    
+                    
+                    
+                /*************************
+                *   BUSCAR PISTA LIBRE   *
+                **************************/
+                    
                 }else if(datosRecibidos.equals("pista"))
                 {
-                    //System.out.println("Servidor envia respuesta");
-                    
-                    
-                    
+                    // Creamos el mensaje de respuesta
                     PrintWriter outPrinter = new PrintWriter(socketServicio.getOutputStream(),true);
+
                     
+                    // Llamamos a la Funcion TestLandingTrackFree() que comprueba si hay pistas libres
                     int place = airport.TestLandingTrackFree();
                     
-                    if( place == -1)
+                    if( place == -1) // Si no hay pista libres
                     {
+                         // Enviamos la respuesta de no_pista
                         outPrinter.println("no_pista");
                         outPrinter.flush();
                         
                     }else
                     {
                         
-                        
+                        // Si hay pista enviamos el entero recibido anteriormente
                         outPrinter.println(Integer.toString(place));
                         outPrinter.flush();
                         
-                        
+                        // Añadimos el avion a la pista n.
                         airport.add_plane_to_landing_track(place);
                     
+                        
+                        
+                        // Esperamos a que el cliente nos envie las coordenadas del garage en el que se encuentra para marcarla como libre
                         Pair<Integer, Integer> coor = new Pair(0,0);
                         
+                        // Esperamos a que el cliente nos envie la coordenada x del garage
                         BufferedReader coor_x = new BufferedReader(new InputStreamReader(socketServicio.getInputStream())); 
                         String x = coor_x.readLine();
                         coor.first = Integer.parseInt(x);
                     
+                        // Esperamos a que el cliente nos envie la coordenada y del garage
                         BufferedReader coor_y = new BufferedReader(new InputStreamReader(socketServicio.getInputStream())); 
                         String y = coor_y.readLine();
                         coor.second = Integer.parseInt(y);
                         
+                        // Cambiamos el estado de la plaza del garage coor a libre
                         airport.add_free_to_garage(coor);
                         
+                        //DESCOMENTAR SI SE QUIERE VER LAS ENTRADAS EN PISTA DE LOS 
+                        //AVIONES Y COMENTAR LOS OTROS airport.Mostrar();
+                        airport.Mostrar();
                         
                     }
                 
@@ -192,7 +229,11 @@ public class AltasServer extends Thread{
                         
                     airport.add_free_to_landing_track(n);
                     
-                    airport.Mostrar();
+                    
+                    //DESCOMENTAR SI SE QUIERE VER LOS DESPEGUES Y COMENTAR LOS OTROS airport.Mostrar();
+                    //airport.Mostrar();
+                    
+                    
                 }
                 
                 
