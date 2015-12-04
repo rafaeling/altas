@@ -15,6 +15,8 @@ public class Airport {
     
         AltasServer servidor= new AltasServer();
         
+        servidor.start();
+        
         Plane cliente1= new Plane();
         Plane cliente2= new Plane();
         Plane cliente3= new Plane();
@@ -24,11 +26,10 @@ public class Airport {
         Plane cliente7= new Plane();
         Plane cliente8= new Plane();
         Plane cliente9= new Plane();
-        Plane cliente10= new Plane();
         
         
         
-        servidor.start();
+        
         
         
         cliente1.start();
@@ -40,7 +41,6 @@ public class Airport {
         cliente7.start();
         cliente8.start();
         cliente9.start();
-        cliente10.start();
 
     
     }
