@@ -281,19 +281,8 @@ public class Plane extends Thread{
                 socketServicio.close(); 
             }
             
-            
-            
-            
-            
-            
-            
-            
-            
-               socketServicio.close(); 
-            
+            socketServicio.close(); 
   
-               
-               
                 // Excepciones:
         } catch (UnknownHostException e) {
                 System.err.println("Error: Nombre de host no encontrado.");
