@@ -33,10 +33,6 @@ public class AltasServer extends Thread{
     // Servicio
     Socket socketServicio;
     
-    // stream de escritura (por aquí se envía los datos al cliente)
-  
-    
-    String datosRecibidos="";
     
     public void run(){
                 
@@ -54,7 +50,7 @@ public class AltasServer extends Thread{
                 
                 // Comenzamos con el primer mensaje que nos llega del cliente
 		BufferedReader inputStream = new BufferedReader(new InputStreamReader(socketServicio.getInputStream()));
-                datosRecibidos = inputStream.readLine();
+                String datosRecibidos = inputStream.readLine();
 
                 
                 /****************
@@ -102,10 +98,11 @@ public class AltasServer extends Thread{
                         //airport.Mostrar();
                     }
                 
+                    
                 /**************
                 *   APARCAR   *
                 ***************/
-                    
+                
                 }else if(datosRecibidos.equals("garage"))
                 {   
                     // Creamos el mensaje de respuesta
@@ -210,40 +207,42 @@ public class AltasServer extends Thread{
                         
                     }
                 
+                
+                    
+                /***************
+                *   DESPEGUE   *
+                ****************/
+                    
                 }if(datosRecibidos.equals("despegue"))
                 {
-                    //System.out.println("Servidor envia respuesta");
-                    
-                    
-                    
+                    // Creamos el mensaje de respuesta no necesita comprobar nada
                     PrintWriter outPrinter = new PrintWriter(socketServicio.getOutputStream(),true);
-                    
-                    outPrinter.println("a volar");
+                    outPrinter.println("take_off");
                     outPrinter.flush();
+                    
+                    // Espero un nuevo mensaje del cliente con la pista enviada para comprobar que acepta
+                    // la pista y se dispone a aterrizar
                         
+                    // Capto el mensaje de llegada                    
                     BufferedReader add = new BufferedReader(new InputStreamReader(socketServicio.getInputStream()));
-
                     String num = add.readLine();
-                        
                     int n = Integer.parseInt(num);
-                        
+                    
+                    // Cambiamos el estado de la pista n a libre
                     airport.add_free_to_landing_track(n);
                     
                     
                     //DESCOMENTAR SI SE QUIERE VER LOS DESPEGUES Y COMENTAR LOS OTROS airport.Mostrar();
                     //airport.Mostrar();
-                    
-                    
+    
                 }
-                
-                
 
             }while(true);
                 
             } catch (IOException ex) {
                 Logger.getLogger(AltasServer.class.getName()).log(Level.SEVERE, null, ex);
-            }     
+            }
+        
         }
-    
     
 }
