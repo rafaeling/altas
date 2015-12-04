@@ -7,7 +7,10 @@ package altas;
 
 /**
  *
- * @author rafae
+ * @author rafaeing
+ * 
+ * Ejecutamos el servidor y 9 aviones de forma concurrente
+ * 
  */
 public class Airport {
     
