@@ -9,6 +9,8 @@ package altas;
 /**
  * 
  * @author rafaeling
+ * 
+ * Clase que almacena el aeropuerto con las pistas para aviones y el garage para almacenarlos
  */
 public class LandingTrack {
     
@@ -23,6 +25,8 @@ public class LandingTrack {
     
     // Numero de pistas
     private int num_landing_track;
+    
+    
     
     /**
      * 
@@ -55,6 +59,11 @@ public class LandingTrack {
         }
     }
     
+    
+    
+    /**
+     *  Muestra el estado de las pistas y el garage
+     */
     public void Mostrar()
     {
         System.out.println("Garage");
@@ -76,11 +85,27 @@ public class LandingTrack {
         }
     }
     
+    
+    
+    /**
+     * 
+     * Devuelve el tamaño del garage
+     * 
+     * @return 
+     */
     private int Get_Tam_Garage()
     {
         return tam_garage;
     }
     
+    
+    
+    /**
+     * 
+     * Devuelve el número de pistas
+     * 
+     * @return 
+     */
     private int Get_Num_Landing_Track()
     {   
         return num_landing_track;
@@ -89,13 +114,11 @@ public class LandingTrack {
     
     
     /**
-    *
-    * @author rafaeling
-    * 
-    * Método que devuelve -1 si no hay ninguna pista libre o un número entero que es la pista libre
-    * 
-    */
-    
+     * @author rafaeling
+     * 
+     * Método que devuelve -1 si no hay ninguna pista libre o un número entero que es la pista libre 
+     * @return 
+     */
     public int TestLandingTrackFree()
     {
         boolean free_landing_track = false;
@@ -126,17 +149,20 @@ public class LandingTrack {
         
     }
     
+    
+   
     /**
-    *
-    * @author rafaeling
-    * 
-    * Método que cambia la pista de aterrizaje n con un 1, para marcarla como ocupada.
-    * 
-    */
+     * @author rafaeling
+     * 
+     * Método que cambia la pista de aterrizaje n con un 1, para marcarla como ocupada.
+     * @param n 
+     */
     public void add_plane_to_landing_track(int n)
     {
         landingtrack[n] = 1;
     }
+    
+    
     
     /**
     *
@@ -180,17 +206,20 @@ public class LandingTrack {
         }
     }
     
+    
+
     /**
-    *
-    * @author rafaeling
-    * 
-    * Método que cambia al plaza de garage (x,y) con un 1, para marcarla como ocupada.
-    * 
-    */
+     *
+     * @author rafaeling
+     * 
+    * Método que cambia al plaza de garage (x,y) con un 1, para marcarla como ocupada. 
+     * @param n 
+     */
     public void add_plane_to_garage(Pair<Integer, Integer> n)
     {
         garage[n.first][n.second] = 1;
     }
+    
     
     
     /**
@@ -206,6 +235,8 @@ public class LandingTrack {
         landingtrack[n] = 0;
     }
    
+    
+    
     /**
      * @author rafaeling
      * 
