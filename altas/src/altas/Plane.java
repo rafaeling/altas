@@ -24,7 +24,6 @@ public class Plane extends Thread{
     // Para guardar la lectura
     String respuesta="";  
     
-    String no_land = "no_land";
     
     boolean waiting_land_track = false;
     boolean wating_garage = false;
@@ -44,7 +43,6 @@ public class Plane extends Thread{
     // Socket para la conexión TCP
     Socket socketServicio=null;
     
-    int i = 0;
     
     String estado;
     
@@ -79,7 +77,7 @@ public class Plane extends Thread{
                 
                 
                 //SI ME DEJA ATERRIZAR
-                if (!(respuesta.equals(no_land))){
+                if (!(respuesta.equals("no_land"))){
                     
                     //System.out.println("Avion Puede Aterrizar");
                     
